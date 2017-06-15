@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Примеры. Метка</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
+    <script type="text/javascript">
+var watchID, map, current_mark;
+ymaps.ready(init);
+function update_position(position) {
+    var latitude = position.coords.latitude,
+        longitude = position.coords.longitude,
+        coords = [latitude, longitude];
+    alert(latitude + ':' + longitude);
+    if (!map) {
+        map = new ymaps.Map(
+            "map",
+            {
+                center: coords, 
+                zoom: 15
+            }
+        );
+    }
+    map.setCenter(coords);
+    if (current_mark) {
+        map.geoObjects.remove(current_mark);
+    }
+    current_mark = new ymaps.Placemark(coords);
+    map.geoObjects.add(current_mark);
+    console.log(position.coords.latitude, position.coords.longitude);
+}
+function init() {
+    if ("geolocation" in navigator) {
+        watchID = navigator.geolocation.watchPosition(update_position);
+    }
+}
+
+    </script>
+	<style>
+        html, body, #map {
+            width: 100%; height: 100%; padding: 0; margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+</body>
+</html>
