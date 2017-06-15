@@ -4,14 +4,21 @@
         <title>Примеры. Метка</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script type="text/javascript">
-function update_position(position) {
-    var latitude = position.coords.latitude,
-        longitude = position.coords.longitude,
-        coords = [latitude, longitude];
-    alert(latitude + ':' + longitude);
-}
 if ("geolocation" in navigator) {
-    watchID = navigator.geolocation.watchPosition(update_position);
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            alert("Lat: " + position.coords.latitude + "\nLon: " + position.coords.longitude);
+        },
+        function(error){
+            alert(error.message);
+        }, {
+            maximumAge: 30000,
+            timeout: 5000,
+            enableHighAccuracy: false
+        }
+    );
+} else {
+    alert('No geolocation!');
 }
         </script>
     </head>
