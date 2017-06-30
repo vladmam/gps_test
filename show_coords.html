@@ -4,21 +4,37 @@
         <title>Примеры. Метка</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <script type="text/javascript">
-if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            alert("Lat: " + position.coords.latitude + "\nLon: " + position.coords.longitude);
+
+var mode, watch;
+function on_position (position) {
+    'use strict';
+    alert(mode + ' ' + position.coords.latitude + ' ' + position.coords.longitude);
+}
+if (navigator.geolocation) {
+    mode = 'High accuracy AGPS';
+    watch = navigator.geolocation.getCurrentPosition(
+        on_position,
+        function (error) {
+            mode = 'Low accuracy APGS';
+            watch = navigator.geolocation.watchPosition(
+                self.on_position,
+                function (error) {
+                    mode = 'No geolocation';
+                    alert(mode);
+                },
+                {
+                    enableHighAccuracy: false,
+                    timeout: 30000
+                }
+            );
         },
-        function(error){
-            alert(error.message);
-        }, {
-            maximumAge: 30000,
-            timeout: 5000,
-            enableHighAccuracy: false
+        {
+            enableHighAccuracy: true,
+            timeout: 30000
         }
     );
 } else {
-    alert('No geolocation!');
+    alert('No geolocation');
 }
         </script>
     </head>
