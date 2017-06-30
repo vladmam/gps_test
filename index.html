@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript"></script>
     <script type="text/javascript">
-var watchID, map, current_mark;
+var watch, map, current_mark, mode;
 ymaps.ready(init);
 function update_position(position) {
     var latitude = position.coords.latitude,
@@ -19,6 +19,7 @@ function update_position(position) {
                 zoom: 15
             }
         );
+        alert(mode);
     }
     map.setCenter(coords);
     if (current_mark) {
@@ -29,8 +30,31 @@ function update_position(position) {
     console.log(position.coords.latitude, position.coords.longitude);
 }
 function init() {
-    if ("geolocation" in navigator) {
-        watchID = navigator.geolocation.watchPosition(update_position);
+    if (navigator.geolocation) {
+        mode = 'High accuracy AGPS';
+        watch = navigator.geolocation.getCurrentPosition(
+            update_position,
+            function (error) {
+                mode = 'Low accuracy APGS';
+                watch = navigator.geolocation.watchPosition(
+                    update_position,
+                    function (error) {
+                        mode = 'No geolocation';
+                        alert(mode);
+                    },
+                    {
+                        enableHighAccuracy: false,
+                        timeout: 30000
+                    }
+                );
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 30000
+            }
+        );
+    } else {
+        alert('No geolocation');
     }
 }
 
